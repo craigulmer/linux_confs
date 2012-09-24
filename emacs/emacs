@@ -1,0 +1,171 @@
+
+
+;;Prevent stupid startup message
+(setq inhibit-startup-message t)
+
+
+(add-to-list 'load-path "~/projects/linux_confs/emacs/emacs.d")
+
+
+
+(setq frame-title-format (concat  "%b - emacs@" (system-name)))
+
+;; Set font to a readable size
+(set-default-font "-adobe-courier-medium-r-normal--14-140-75-75-m-90-iso8859-1")
+
+;; Set shift-arrow to be select region
+(setq pc-select-selection-keys-only t)
+(pc-selection-mode 1)
+
+;; Others
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(auto-save-default nil)
+ '(backup-inhibited t t)
+ '(blink-matching-paren t)
+ '(column-number-mode t)
+ '(current-language-environment "English")
+ '(overwrite-mode nil t)
+ '(scroll-bar-mode (quote right))
+ '(show-paren-mode t)
+ '(transient-mark-mode t)
+ '(vhdl-electric-mode nil)
+ '(vhdl-indent-tabs-mode t)
+ '(vhdl-intelligent-tab nil)
+ '(vhdl-prompt-for-comments nil)
+ '(vhdl-self-insert-comments nil)
+ '(vhdl-stutter-mode nil)
+ '(tab-width 3))
+
+;;'(paren-mode (quote blink-paren) nil (paren))
+
+
+;; Always end a file with a newline
+(setq require-final-newline t)
+
+;; Stop at the end of the file, not just add lines
+(setq next-line-add-newlines nil)
+
+
+
+; Convert a buffer from dos ^M end of lines to unix end of lines
+(defun dos2unix ()
+  (interactive)
+  (goto-char (point-min))
+  (while (search-forward "\r" nil t) (replace-match "")))
+
+;vice versa
+(defun unix2dos ()
+  (interactive)
+  (goto-char (point-min))
+  (while (search-forward "\n" nil t) (replace-match "\r\n")))
+
+(require 'color-theme)
+    (color-theme-initialize)
+    (color-theme-cdu)
+
+
+;; Xemacs binding
+(global-set-key "\M-g" 'goto-line)
+
+(global-set-key [f5] 'compile)
+(global-set-key [f6] 'kill-compilation)
+
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(font-lock-comment-face ((t (:foreground "Blue"))))
+ '(font-lock-preprocessor-face ((t (:foreground "slate blue")))))
+
+(autoload 'matlab-mode "~/.emacs.d/matlab.el" "Enter Matlab mode." t)
+(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist)) 
+(autoload 'matlab-shell "~/.emacs.d/matlab.el" "Interactive Matlab mode." t) 
+
+;;; cperl-mode is preferred to perl-mode                                        
+(defalias 'perl-mode 'cperl-mode)
+
+
+;; == gpg ==
+;; probably the better, official version==> (require 'pgg)
+;; note: now outdated, use easypg
+;; (require 'pgg)
+
+;;EasyPG - new built in version in emacs 23, which isn't in Fedora yet
+;;(require 'epa-file)
+;;(epa-file-enable)
+
+;; The below though worked out of box. May have issues with unencrypted sitting next to file
+(autoload 'alpaca-after-find-file "alpaca" nil t)
+(add-hook 'find-file-hooks 'alpaca-after-find-file)
+
+
+
+;;CDU NEVER use tabs, use a small number for indents
+(setq-default indent-tabs-mode nil)
+(setq-default c-basic-offset 2)
+
+
+
+(put 'downcase-region 'disabled nil)
+
+
+(define-skeleton dump-sl
+  "std_logic"
+  > "std_logic"
+)
+
+(global-set-key [(f1)] 'dump-sl)
+
+(define-skeleton dump-slv
+  "std_logic_vector"
+  > "std_logic_vector"
+)
+
+(global-set-key [(f2)] 'dump-slv)
+
+(define-skeleton dump-vhdlp
+  "dump-cdu-vhdl-proc"
+  > "process\n"
+  > "begin\n"
+  > "  wait until CLK'event and CLK='1';\n"
+  > "  if(RST='1') then\n"
+  > "  else\n"
+  > "  end if;\n"
+  > "end process;\n"
+  > "\n"
+)
+
+(global-set-key [(f3)] 'dump-vhdlp)
+(define-skeleton dump-vhdlsm
+  "dump-cdu-vhdl-sm"
+  > "process\n"
+  > "begin\n"
+  > "  wait until CLK'event and CLK='1';\n"
+  > "  if(RST='1') then\n"
+  > "  else\n"
+  > "    case(st_FOO) is\n"
+  > "    when  =>\n"
+  > "\n"
+  > "    when others=>\n"
+  > "       st_FOO <= ST_MAIN;\n"
+  > "    end case;\n"
+  > "\n"
+  > "  end if;\n"
+  > "end process;\n"
+  > "\n"
+)
+
+(global-set-key [(f4)] 'dump-vhdlsm)
+
+(defun unscewqup-paragraph (beg end)
+ (interactive "r")
+ (shell-command-on-region beg end "fmt -w2000" nil t))
+
+(add-to-list 'load-path "/opt/go/misc/emacs" t)
+(require 'go-mode-load)
+

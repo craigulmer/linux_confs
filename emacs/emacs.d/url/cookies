@@ -1,0 +1,15 @@
+;; Emacs-W3 HTTP cookies file
+;; Automatically generated file!!! DO NOT EDIT!!!
+
+(setq url-cookie-storage
+ '((".reference.com"
+  [cookie "accepting" "1" "15-May-2010 22:01:59.00 GMT" "/" ".reference.com" nil]
+  [cookie "ptid" "3778|0~3746|0~3745|0~3775|0" "15-May-2010 22:01:59.00 GMT" "/" ".reference.com" nil]))
+)
+(setq url-cookie-secure-storage
+ 'nil)
+
+;; Local Variables:
+;; version-control: never
+;; no-byte-compile: t
+;; End:
