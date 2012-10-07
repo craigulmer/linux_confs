@@ -11,11 +11,11 @@
 (setq frame-title-format (concat  "%b - emacs@" (system-name)))
 
 ;; Set font to a readable size
-(set-default-font "-adobe-courier-medium-r-normal--14-140-75-75-m-90-iso8859-1")
+;;(set-default-font "-adobe-courier-medium-r-normal--14-140-75-75-m-90-iso8859-1")
 
 ;; Set shift-arrow to be select region
 (setq pc-select-selection-keys-only t)
-(pc-selection-mode 1)
+;;(pc-selection-mode 1)
 
 ;; Others
 (custom-set-variables
