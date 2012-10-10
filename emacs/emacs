@@ -69,6 +69,9 @@
 
 
 ;; Xemacs binding
+(global-set-key [C-tab] `next-multiframe-window)
+(global-set-key [C-S-iso-lefttab] `next-buffer)
+
 (global-set-key "\M-g" 'goto-line)
 
 (global-set-key [f5] 'compile)
@@ -162,10 +165,16 @@
 
 (global-set-key [(f4)] 'dump-vhdlsm)
 
+
+;; Latex: strip out eol for text
 (defun unscewqup-paragraph (beg end)
  (interactive "r")
  (shell-command-on-region beg end "fmt -w2000" nil t))
 
+
 (add-to-list 'load-path "/opt/go/misc/emacs" t)
 (require 'go-mode-load)
 
+
+;; Newer version has tool bar that just eats up space
+(tool-bar-mode 0)
