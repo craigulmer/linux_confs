@@ -1,5 +1,7 @@
 
 
+
+
 ;;Prevent stupid startup message
 (setq inhibit-startup-message t)
 
@@ -12,10 +14,15 @@
 
 ;; Set font to a readable size
 ;;(set-default-font "-adobe-courier-medium-r-normal--14-140-75-75-m-90-iso8859-1")
+;; The above is never on new systems, so instead set font to reasonable size. Divide height by 10 to get pt.. 140=14pt
+(set-face-attribute 'default nil :height 120)
 
 ;; Set shift-arrow to be select region
 (setq pc-select-selection-keys-only t)
 ;;(pc-selection-mode 1)
+
+;; Let del key 
+(delete-selection-mode 1)
 
 ;; Others
 (custom-set-variables
@@ -63,13 +70,46 @@
   (goto-char (point-min))
   (while (search-forward "\n" nil t) (replace-match "\r\n")))
 
+;;(require 'color-theme)
+;;    (color-theme-initialize)
+;;    (color-theme-cdu)
+;;(require 'color-theme)
+;;(eval-after-load "color-theme"
+;;  '(progn
+;;      (color-theme-initialize)
+;;      (color-theme-cdu)))
+;; Laptop.. colors not working?
 (require 'color-theme)
-    (color-theme-initialize)
-    (color-theme-cdu)
+     (color-theme-initialize)
+     (color-theme-deep-blue)
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(font-lock-comment-face ((t (:foreground "royalBlue"))))
+ '(font-lock-preprocessor-face ((t (:foreground "slate Blue")))))
 
 
-;; Xemacs binding
-(global-set-key [C-tab] `next-multiframe-window)
+;; Basic Key bindings
+;;  Frames: Toggle between frames (c-tab or c-q)
+;;          Terminal mode doesn't do c-tab right. Kludge is to switch
+;;          to c-q. c-q is normally insert octal digit, which I don't use
+(if (display-graphic-p)
+    (progn
+        (global-set-key [C-tab] `next-multiframe-window)) ;; Graphical
+        (global-set-key "\C-q"  `next-multiframe-window)  ;; Nongraphical
+)
+
+;;
+
+;;  Kill : Whole line (M-k)
+(global-set-key "\M-k" `kill-whole-line)
+;; todo: con-0 con-k does kill to beginning. con-0 doesn't work
+;;       on terminal mode. Use alt-0 con-k instead
+;;(global-set-key "\C-k" '(lambda () (interactive) (kill-line 0)) ) ;M-k kills to the left
+
+;;  Buffers : Cycle through buffers (c-sh-tab)
 (global-set-key [C-S-iso-lefttab] `next-buffer)
 
 (global-set-key "\M-g" 'goto-line)
@@ -77,13 +117,7 @@
 (global-set-key [f5] 'compile)
 (global-set-key [f6] 'kill-compilation)
 
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "Blue"))))
- '(font-lock-preprocessor-face ((t (:foreground "slate blue")))))
+
 
 (autoload 'matlab-mode "~/.emacs.d/matlab.el" "Enter Matlab mode." t)
 (setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist)) 
@@ -103,8 +137,8 @@
 ;;(epa-file-enable)
 
 ;; The below though worked out of box. May have issues with unencrypted sitting next to file
-(autoload 'alpaca-after-find-file "alpaca" nil t)
-(add-hook 'find-file-hooks 'alpaca-after-find-file)
+;;(autoload 'alpaca-after-find-file "alpaca" nil t)
+;;(add-hook 'find-file-hooks 'alpaca-after-find-file)
 
 
 
@@ -113,57 +147,9 @@
 (setq-default c-basic-offset 2)
 
 
-
+;; Allow regions to be c-x c-u converted
 (put 'downcase-region 'disabled nil)
-
-
-(define-skeleton dump-sl
-  "std_logic"
-  > "std_logic"
-)
-
-(global-set-key [(f1)] 'dump-sl)
-
-(define-skeleton dump-slv
-  "std_logic_vector"
-  > "std_logic_vector"
-)
-
-(global-set-key [(f2)] 'dump-slv)
-
-(define-skeleton dump-vhdlp
-  "dump-cdu-vhdl-proc"
-  > "process\n"
-  > "begin\n"
-  > "  wait until CLK'event and CLK='1';\n"
-  > "  if(RST='1') then\n"
-  > "  else\n"
-  > "  end if;\n"
-  > "end process;\n"
-  > "\n"
-)
-
-(global-set-key [(f3)] 'dump-vhdlp)
-(define-skeleton dump-vhdlsm
-  "dump-cdu-vhdl-sm"
-  > "process\n"
-  > "begin\n"
-  > "  wait until CLK'event and CLK='1';\n"
-  > "  if(RST='1') then\n"
-  > "  else\n"
-  > "    case(st_FOO) is\n"
-  > "    when  =>\n"
-  > "\n"
-  > "    when others=>\n"
-  > "       st_FOO <= ST_MAIN;\n"
-  > "    end case;\n"
-  > "\n"
-  > "  end if;\n"
-  > "end process;\n"
-  > "\n"
-)
-
-(global-set-key [(f4)] 'dump-vhdlsm)
+(put 'upcase-region 'disabled nil)
 
 
 ;; Latex: strip out eol for text
@@ -172,9 +158,134 @@
  (shell-command-on-region beg end "fmt -w2000" nil t))
 
 
-(add-to-list 'load-path "/opt/go/misc/emacs" t)
-(require 'go-mode-load)
+;;(add-to-list 'load-path "/opt/go/misc/emacs" t)
+;;(require 'go-mode-load)
 
 
 ;; Newer version has tool bar that just eats up space
 (tool-bar-mode 0)
+
+
+;; Org mode
+(add-to-list 'load-path "~/projects/linux_confs/emacs/org-mode/lisp")
+(add-to-list 'load-path "~/projects/linux_confs/emacs/org-mode/contrib/lisp" t)
+
+(setq org-directory "~/.notes")
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+(define-key global-map "\C-cc" 'org-capture)
+(setq org-log-done 'time)
+
+
+(require 'org-crypt)
+(org-crypt-use-before-save-magic)
+(setq org-tags-exclude-from-inheritance (quote ("crypt")))
+;; set key here or nil for symmetric encryption
+(setq org-crypt-key nil)
+
+
+ (setq org-capture-templates
+      '(("t" "Work Todo" entry (file+headline "~/.notes/work/todo.org" "Tasks")
+             "* TODO %?\n  %i\n  %a")
+       ("T" "Home Todo" entry (file+headline "~/.notes/home/todo.org" "Tasks")
+             "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+datetree "~/.notes/journal.org")
+             "* %?\nEntered on %U\n  %i\n  %a")
+        ("p" "Person" entry (file+datetree "~/.notes/people.org")
+             "* %?\nMy person on %U\n  %i\n  %a")))
+
+
+;; Change todo list to auto done when children done?
+(defun org-summary-todo (n-done n-not-done)
+       "Switch entry to DONE when all subentries are done, to TODO otherwise."
+       (let (org-log-done org-log-states)   ; turn off logging
+         (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+     
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+;; Export to reveal
+(add-to-list 'load-path "~/projects/linux_confs/emacs/org-reveal")
+(require 'ox-reveal)
+
+;; Open pdfs and stuff with openwith
+(add-to-list 'load-path "~/projects/linux_confs/emacs/openwith")
+(require 'openwith)
+(setq openwith-associations '(("\\.pdf\\'" "evince" (file))))
+(openwith-mode t)
+
+
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((ditaa . t))) ; this line activates ditaa
+
+
+
+
+;; CEDET
+;; Based on alexott's configs
+;; see https://github.com/alexott/emacs-configs
+
+(setq cedet-root-path (file-name-as-directory "~/projects/linux_confs/emacs/cedet/"))
+(load-file (concat cedet-root-path "cedet-devel-load.el"))
+(add-to-list 'load-path (concat cedet-root-path "contrib"))
+ 
+;; select which submodes we want to activate
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+ 
+;; Activate semantic
+(semantic-mode 1)
+ 
+;; load contrib library
+(require 'eassist)
+ 
+;; customisation of modes
+(defun alexott/cedet-hook ()
+  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu)
+  (local-set-key "\C-c?" 'semantic-ia-complete-symbol)
+  ;;
+  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
+  (local-set-key "\C-c=" 'semantic-decoration-include-visit)
+ 
+  (local-set-key "\C-cj" 'semantic-ia-fast-jump)
+  (local-set-key "\C-cq" 'semantic-ia-show-doc)
+  (local-set-key "\C-cs" 'semantic-ia-show-summary)
+  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
+  )
+(add-hook 'c-mode-common-hook 'alexott/cedet-hook)
+(add-hook 'lisp-mode-hook 'alexott/cedet-hook)
+(add-hook 'scheme-mode-hook 'alexott/cedet-hook)
+(add-hook 'emacs-lisp-mode-hook 'alexott/cedet-hook)
+(add-hook 'erlang-mode-hook 'alexott/cedet-hook)
+ 
+(defun alexott/c-mode-cedet-hook ()
+  (local-set-key "\C-ct" 'eassist-switch-h-cpp)
+  (local-set-key "\C-xt" 'eassist-switch-h-cpp)
+  (local-set-key "\C-ce" 'eassist-list-methods)
+  (local-set-key "\C-c\C-r" 'semantic-symref)
+  )
+(add-hook 'c-mode-common-hook 'alexott/c-mode-cedet-hook)
+ 
+(semanticdb-enable-gnu-global-databases 'c-mode t)
+(semanticdb-enable-gnu-global-databases 'c++-mode t)
+ 
+(when (cedet-ectag-version-check t)
+  (semantic-load-enable-primary-ectags-support))
+ 
+;; SRecode
+(global-srecode-minor-mode 1)
+ 
+;; EDE
+(global-ede-mode 1)
+(ede-enable-generic-projects)
+ 
+ 
+;; Setup JAVA....
+(require 'cedet-java)
+ 
+;;; minimial-cedet-config.el ends here
