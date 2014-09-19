@@ -14,3 +14,5 @@ if [ "$num" -eq "0" ]; then
   echo ". $HOME/projects/linux_confs/bash/cdu_bash.sh" >> $HOME/.bashrc
 fi
 
+# emacs gpg needs pinetry-gui?
+# yum install pinentry-gui
