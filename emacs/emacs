@@ -298,6 +298,8 @@
 ;;; minimial-cedet-config.el ends here
 
 
+;; Make latex docs wrap around
+(add-hook 'latex-mode-hook 'longlines-mode)
 
 ;; CDU: This seems to work
 (require 'color-theme)
