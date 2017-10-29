@@ -1,5 +1,13 @@
 
 
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
 
 ;;Prevent stupid startup message
@@ -7,6 +15,14 @@
 
 
 (add-to-list 'load-path "~/projects/linux_confs/emacs/emacs.d")
+
+
+;; Yasnippet: add tab completion based on pre-programmed snippets
+(add-to-list 'load-path "~/.emacs.d/elpa/yasnippet-20170601.1907")
+(require 'yasnippet)
+(yas-global-mode 1)
+(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+
 
 
 
@@ -27,26 +43,27 @@
 
 ;; Others
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(auto-save-default nil)
  '(backup-inhibited t t)
  '(blink-matching-paren t)
  '(column-number-mode t)
  '(current-language-environment "English")
  '(overwrite-mode nil t)
+ '(package-selected-packages (quote (markdown-mode auto-yasnippet yasnippet ##)))
  '(scroll-bar-mode (quote right))
  '(show-paren-mode t)
+ '(tab-width 3)
  '(transient-mark-mode t)
  '(vhdl-electric-mode nil)
  '(vhdl-indent-tabs-mode t)
  '(vhdl-intelligent-tab nil)
  '(vhdl-prompt-for-comments nil)
  '(vhdl-self-insert-comments nil)
- '(vhdl-stutter-mode nil)
- '(tab-width 3))
+ '(vhdl-stutter-mode nil))
 
 ;;'(paren-mode (quote blink-paren) nil (paren))
 
@@ -84,10 +101,10 @@
 ;;     (color-theme-initialize)
 ;;     (color-theme-deep-blue)
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(font-lock-comment-face ((t (:foreground "royalBlue"))))
  '(font-lock-preprocessor-face ((t (:foreground "slate Blue")))))
 
@@ -118,9 +135,10 @@
 
 (global-set-key "\M-g" 'goto-line)
 
+
 (global-set-key [f5] 'compile)
 (global-set-key [f6] 'kill-compilation)
-
+(global-set-key [f9] 'org-decrypt-entry)
 
 
 (autoload 'matlab-mode "~/.emacs.d/matlab.el" "Enter Matlab mode." t)
@@ -177,7 +195,7 @@
 (add-to-list 'load-path "~/projects/linux_confs/emacs/org-mode/lisp")
 (add-to-list 'load-path "~/projects/linux_confs/emacs/org-mode/contrib/lisp" t)
 
-(setq org-directory "~/.notes")
+(setq org-directory "~/projects/notes/stubs")
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (define-key global-map "\C-cc" 'org-capture)
 (setq org-log-done 'time)
@@ -209,16 +227,6 @@
      
 (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-;; Export to reveal
-(add-to-list 'load-path "~/projects/linux_confs/emacs/org-reveal")
-(require 'ox-reveal)
-
-;; Open pdfs and stuff with openwith
-(add-to-list 'load-path "~/projects/linux_confs/emacs/openwith")
-(require 'openwith)
-(setq openwith-associations '(("\\.pdf\\'" "evince" (file))))
-(openwith-mode t)
-
 
 
 (org-babel-do-load-languages
@@ -226,76 +234,9 @@
  '((ditaa . t))) ; this line activates ditaa
 
 
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-
-;; CEDET
-;; Based on alexott's configs
-;; see https://github.com/alexott/emacs-configs
-
-(setq cedet-root-path (file-name-as-directory "~/projects/linux_confs/emacs/cedet/"))
-(load-file (concat cedet-root-path "cedet-devel-load.el"))
-(add-to-list 'load-path (concat cedet-root-path "contrib"))
- 
-;; select which submodes we want to activate
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
- 
-;; Activate semantic
-(semantic-mode 1)
- 
-;; load contrib library
-(require 'eassist)
- 
-;; customisation of modes
-(defun alexott/cedet-hook ()
-  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu)
-  (local-set-key "\C-c?" 'semantic-ia-complete-symbol)
-  ;;
-  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-  (local-set-key "\C-c=" 'semantic-decoration-include-visit)
-  (local-set-key "\C-cj" 'semantic-ia-fast-jump)
-  (local-set-key "\C-cq" 'semantic-ia-show-doc)
-  (local-set-key "\C-cs" 'semantic-ia-show-summary)
-  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-)
-(add-hook 'c-mode-common-hook 'alexott/cedet-hook)
-(add-hook 'lisp-mode-hook 'alexott/cedet-hook)
-(add-hook 'scheme-mode-hook 'alexott/cedet-hook)
-(add-hook 'emacs-lisp-mode-hook 'alexott/cedet-hook)
-(add-hook 'erlang-mode-hook 'alexott/cedet-hook)
- 
-(defun alexott/c-mode-cedet-hook ()
-  (local-set-key "\C-ct" 'eassist-switch-h-cpp)
-  (local-set-key "\C-xt" 'eassist-switch-h-cpp)
-  (local-set-key "\C-ce" 'eassist-list-methods)
-  (local-set-key "\C-c\C-r" 'semantic-symref)
-)
-(add-hook 'c-mode-common-hook 'alexott/c-mode-cedet-hook)
- 
-(semanticdb-enable-gnu-global-databases 'c-mode t)
-(semanticdb-enable-gnu-global-databases 'c++-mode t)
- 
-(when (cedet-ectag-version-check t)
-  (semantic-load-enable-primary-ectags-support))
- 
-;; SRecode
-(global-srecode-minor-mode 1)
- 
-;; EDE
-;; This kills org-mode
-;;(global-ede-mode 1)
-(ede-enable-generic-projects)
- 
- 
-;; Setup JAVA....
-(require 'cedet-java)
- 
-;;; minimial-cedet-config.el ends here
 
 
 ;; Make latex docs wrap around
@@ -313,3 +254,16 @@
 (defun my-c-setup ()
    (c-set-offset 'innamespace [0]))
 (add-hook 'c++-mode-hook 'my-c-setup)
+
+
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max))
+            ;; This would override `fill-column' if it's an integer.
+            (emacs-lisp-docstring-fill-column t))
+    (fill-paragraph nil region)))
+
+;; Handy key definition
+(define-key global-map "\M-Q" 'unfill-paragraph)

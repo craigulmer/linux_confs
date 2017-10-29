@@ -5,7 +5,7 @@
 #
 # Enable via:
 #   git config --global diff.external \
-#               /home/cdulmer/projects/linux_confs/scripts/melddiff.py
+#               /home/cdulmer/projects/linux_confs/bin/melddiff.py
 # 
 import sys
 import os

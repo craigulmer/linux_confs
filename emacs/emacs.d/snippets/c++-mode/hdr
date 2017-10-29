@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: hdr
+# key: hdr
+# --
+#ifndef ${1:$(upcase yas-text)}_${2:$(upcase yas-text)}_HH
+#define ${1:$(upcase yas-text)}_${2:$(upcase yas-text)}_HH
+
+namespace $1 {
+
+class ${2:Name} {
+public:
+    ${2:$(yas/substr yas-text "[^: ]*")}();
+    virtual ~${2:$(yas/substr yas-text "[^: ]*")}();
+};
+$0
+
+} // namespace $1
+
+#endif // ${1:$(upcase yas-text)}_${2:$(upcase yas-text)}_HH
